@@ -1,4 +1,4 @@
-#' Fit bivariate joint tail model
+#' Fits bivariate joint tail model
 #'
 #' Take data on uniform margins and fit the Ledford and Tawn (1997) joint tail model. Also contains the method where additional information from values that are extreme in at most one variable is used.
 #'
@@ -9,7 +9,12 @@
 #' @param ci.meth Method to use to obtain confidence intervals, '\code{se}' for standard error confidence intervals and '\code{pl}' for profile likelihood confidence intervals
 #' @param marg.inf Is additional marginal information from points that are extreme in only one variable used? \code{FALSE} gives Ledford and Tawn (1997) result, \code{TRUE} gives results using Section 2.4.2 from Hugo Winter's thesis.
 #' @export
-#' @return Estimates of the dependence parameters, threshold dependent extremal dependence measure with confidence intervals
+#' @return Estimates of two dependence parameters with confidence intervals:
+#' \itemize{
+#' \item  threshold dependent extremal dependence measure
+#' \item  threshold dependent coefficient of tail dependence
+#' }
+#'
 #' @importFrom stats approx cor.test na.omit optim
 #'          predict qchisq qnorm quantile rnorm spline uniroot
 

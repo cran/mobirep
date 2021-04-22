@@ -2,7 +2,7 @@
 % Please edit documentation in R/BvLTDep.R
 \name{Bv.LT.Dep}
 \alias{Bv.LT.Dep}
-\title{Fit bivariate joint tail model}
+\title{Fits bivariate joint tail model}
 \usage{
 Bv.LT.Dep(
   data,
@@ -27,7 +27,11 @@ Bv.LT.Dep(
 \item{marg.inf}{Is additional marginal information from points that are extreme in only one variable used? \code{FALSE} gives Ledford and Tawn (1997) result, \code{TRUE} gives results using Section 2.4.2 from Hugo Winter's thesis.}
 }
 \value{
-Estimates of the dependence parameters, threshold dependent extremal dependence measure with confidence intervals
+Estimates of two dependence parameters with confidence intervals:
+\itemize{
+\item  threshold dependent extremal dependence measure
+\item  threshold dependent coefficient of tail dependence
+}
 }
 \description{
 Take data on uniform margins and fit the Ledford and Tawn (1997) joint tail model. Also contains the method where additional information from values that are extreme in at most one variable is used.

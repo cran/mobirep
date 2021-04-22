@@ -2,7 +2,7 @@
 % Please edit documentation in R/jt_kde.R
 \name{JT.KDE.ap}
 \alias{JT.KDE.ap}
-\title{Fit bivariate joint tail model with Kernel density estimator (Adapted from Cooley et al., 2019)}
+\title{Fits the bivariate joint tail model with Kernel density estimator}
 \usage{
 JT.KDE.ap(
   u2,
@@ -54,11 +54,29 @@ a list containing the following:
 }
 }
 \description{
-Fit bivariate joint tail model with Kernel density estimator (Adapted from Cooley et al., 2019)
+Fits the bivariate joint tail model with Kernel density estimator (Adapted from Cooley et al. (2019))and provides
+estimates of a conditional or joint exceedance level curve with a probability corresponding to '\code{pobj}'.
+Also provides estimates of dependence measures.
 }
 \examples{
-  \dontrun{
-jtres<-JT.KDE.ap(u2=u2,pbas=0.01,pobj=upobj,beta=100,kk=kk,vtau=vtau,
+# Inport data
+data(porto)
+tr1=0.9
+tr2=0.9
+fire01meantemp=na.omit(fire01meantemp)
+u=fire01meantemp
+
+# Compute uniform margins
+marg=Margins.mod(tr1,tr2,u=fire01meantemp)
+kk=marg$uvar
+pp=marg$uvar_ext
+uu=marg$val_ext
+upobj=0.001
+vtau=cor.test(x=u[,1],y=u[,2],method="kendall")$estimate
+interh="comb"
+\dontrun{
+# Fit JT-KDE model
+jtres<-JT.KDE.ap(u2=u,pbas=0.01,pobj=upobj,beta=100,kk=kk,vtau=vtau,
 devplot=FALSE,mar1=uu[,1],mar2=uu[,2],px=pp[,1],py=pp[,2],interh=interh)
 plot(jtres$levelcurve)
 }

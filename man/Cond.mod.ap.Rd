@@ -2,7 +2,7 @@
 % Please edit documentation in R/jt_kde.R
 \name{Cond.mod.ap}
 \alias{Cond.mod.ap}
-\title{Fit bivariate conditional extremes model (from Heffernan and Tawn, 2004 and texmex R package)}
+\title{Fits the bivariate conditional extremes model}
 \usage{
 Cond.mod.ap(
   u2,
@@ -31,7 +31,7 @@ Cond.mod.ap(
 
 \item{pobj}{objective joint return period modelled with the conditional extremes model}
 
-\item{interh}{type of hazard interrelation '\code{comb}' for compound and '\code{casc}' for cascade,}
+\item{interh}{type of hazard interrelation '\code{comb}' for compound (joint exceedance probability) and '\code{casc}' for cascade (conditional porbability)}
 
 \item{mar1}{Values of the first margin}
 
@@ -51,14 +51,33 @@ a list containing the following:
 }
 }
 \description{
-Fit bivariate conditional extremes model (from Heffernan and Tawn, 2004 and texmex R package)
+Fits the bivariate conditional extremes model (from Heffernan and Tawn (2004) and texmex R package) and provides
+estimates of a conditional or joint exceedance level curve with a probability corresponding to '\code{pobj}'. Also provides estimates of dependence measures.
 }
 \examples{
-  \dontrun{
-condexres<-Cond.mod.ap(u2=fire01meantemp,tr1,tr2,tsim=t.sim,num.sim=10000,
-pobj=0.001,mar1=uu[,1],mar2=uu[,2],px=pp[,1],py=pp[,2],interh=interh)
-plot(condexres$jline)
-}
+# Import data
+data(porto)
+tr1=0.9
+tr2=0.9
+fire01meantemp=na.omit(fire01meantemp)
+u=fire01meantemp
+
+#Compute uniform margins
+marg=Margins.mod(tr1,tr2,u=fire01meantemp)
+kk=marg$uvar
+pp=marg$uvar_ext
+uu=marg$val_ext
+
+upobj=0.001
+t.sim=0.98
+interh="comb"
+ \dontrun{
+# Fit conditional extremes model
+condexres<-Cond.mod.ap(u2=u,tr1,tr2,tsim=t.sim,num.sim=10000,
+pobj=upobj,mar1=uu[,1],mar2=uu[,2],px=pp[,1],py=pp[,2],interh=interh)
+
+ plot(condexres$jline)
+ }
 }
 \references{
 Tilloy, A., Malamud, B.D., Winter, H. and Joly-Laugel, A., 2020.

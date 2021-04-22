@@ -26,6 +26,7 @@ Compute uniform margins with Generalized Pareto Distribution above threshold
 }
 \examples{
 data(porto)
+#set extreme threshold for both variable
 tr1=0.9
 tr2=0.9
 fire01meantemp=na.omit(fire01meantemp)

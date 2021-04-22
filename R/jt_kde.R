@@ -1,5 +1,8 @@
-#' Fit bivariate joint tail model with Kernel density estimator (Adapted from Cooley et al., 2019)
+#' Fits the bivariate joint tail model with Kernel density estimator
 #'
+#' Fits the bivariate joint tail model with Kernel density estimator (Adapted from Cooley et al. (2019))and provides
+#' estimates of a conditional or joint exceedance level curve with a probability corresponding to '\code{pobj}'.
+#' Also provides estimates of dependence measures.
 #' @param u2 Two column data frame
 #' @param pbas joint return period to be modelled with a kde
 #' @param pobj objective joint return period modelled with the joint tail model
@@ -28,8 +31,24 @@
 #' A nonparametric method for producing isolines of bivariate exceedance probabilities.
 #' Extremes, 22(3), pp.373-390.
 #' @examples
-#'   \dontrun{
-#' jtres<-JT.KDE.ap(u2=u2,pbas=0.01,pobj=upobj,beta=100,kk=kk,vtau=vtau,
+#' # Inport data
+#' data(porto)
+#' tr1=0.9
+#' tr2=0.9
+#' fire01meantemp=na.omit(fire01meantemp)
+#' u=fire01meantemp
+#'
+#' # Compute uniform margins
+#' marg=Margins.mod(tr1,tr2,u=fire01meantemp)
+#' kk=marg$uvar
+#' pp=marg$uvar_ext
+#' uu=marg$val_ext
+#' upobj=0.001
+#' vtau=cor.test(x=u[,1],y=u[,2],method="kendall")$estimate
+#' interh="comb"
+#' \dontrun{
+#' # Fit JT-KDE model
+#' jtres<-JT.KDE.ap(u2=u,pbas=0.01,pobj=upobj,beta=100,kk=kk,vtau=vtau,
 #' devplot=FALSE,mar1=uu[,1],mar2=uu[,2],px=pp[,1],py=pp[,2],interh=interh)
 #' plot(jtres$levelcurve)
 #' }
@@ -306,7 +325,10 @@ JT.KDE.ap<-function(u2,pbas ,pobj,beta,vtau,devplot=F,kk,mar1,mar2,px,py,interh=
   res<-list(levelcurve=wqobj,etaJT=etahat,chiJT= Chimed,wq0ri=wq0ri)
 }
 
-#' Fit bivariate conditional extremes model (from Heffernan and Tawn, 2004 and texmex R package)
+#' Fits the bivariate conditional extremes model
+#'
+#'  Fits the bivariate conditional extremes model (from Heffernan and Tawn (2004) and texmex R package) and provides
+#'  estimates of a conditional or joint exceedance level curve with a probability corresponding to '\code{pobj}'. Also provides estimates of dependence measures.
 #'
 #' @param u2 Two column data frame
 #' @param tr1 extreme threshold for first variable
@@ -314,7 +336,7 @@ JT.KDE.ap<-function(u2,pbas ,pobj,beta,vtau,devplot=F,kk,mar1,mar2,px,py,interh=
 #' @param tsim Prediction quantile. The quantile of the conditioning variable above which it will be simulated for importance sampling based prediction (from texmex)
 #' @param num.sim The number of simulated observations to be generated for prediction (from texmex)
 #' @param pobj objective joint return period modelled with the conditional extremes model
-#' @param interh type of hazard interrelation '\code{comb}' for compound and '\code{casc}' for cascade,
+#' @param interh type of hazard interrelation '\code{comb}' for compound (joint exceedance probability) and '\code{casc}' for cascade (conditional porbability)
 #' @param px Uniform values of the first margin with a mixed distribution (empirical below and gpd above a threshold)
 #' @param py Uniform values of the second margin with a mixed distribution (empirical below and gpd above a threshold)
 #' @param mar1 Values of the first margin
@@ -326,11 +348,29 @@ JT.KDE.ap<-function(u2,pbas ,pobj,beta,vtau,devplot=F,kk,mar1,mar2,px,py,interh=
 #' A conditional approach for multivariate extreme values (with discussion).
 #' Journal of the Royal Statistical Society: Series B (Statistical Methodology), 66(3), pp.497-546.
 #' @examples
-#'   \dontrun{
-#' condexres<-Cond.mod.ap(u2=fire01meantemp,tr1,tr2,tsim=t.sim,num.sim=10000,
-#' pobj=0.001,mar1=uu[,1],mar2=uu[,2],px=pp[,1],py=pp[,2],interh=interh)
-#' plot(condexres$jline)
-#' }
+#' # Import data
+#' data(porto)
+#' tr1=0.9
+#' tr2=0.9
+#' fire01meantemp=na.omit(fire01meantemp)
+#' u=fire01meantemp
+#'
+#' #Compute uniform margins
+#' marg=Margins.mod(tr1,tr2,u=fire01meantemp)
+#' kk=marg$uvar
+#' pp=marg$uvar_ext
+#' uu=marg$val_ext
+#'
+#' upobj=0.001
+#' t.sim=0.98
+#' interh="comb"
+#'  \dontrun{
+#' # Fit conditional extremes model
+#' condexres<-Cond.mod.ap(u2=u,tr1,tr2,tsim=t.sim,num.sim=10000,
+#' pobj=upobj,mar1=uu[,1],mar2=uu[,2],px=pp[,1],py=pp[,2],interh=interh)
+#'
+#'  plot(condexres$jline)
+#'  }
 #' @importFrom texmex mex
 #' @export
 #' @return a list containing the following:
@@ -439,16 +479,10 @@ Cond.mod.ap<-function(u2,tr1,tr2,tsim,num.sim,pobj,interh="comb",mar1,mar2,px,py
     j2 <- texmex::JointExceedanceCurve(mex.pred2,pobj,n=100)
     summary(mex.pred2)
 
-    ##############################
-
-
     j1o<-data.frame(j1[[1]],j1[[2]])
     j2o<-data.frame(j2[[1]],j2[[2]])
 
-
     names(j1o)=names(j2o)
-    # sim1<-sim1[which(sim1$V2<(sim1$V1+q2-q1)),]
-    # sim2<-sim2[which(sim2$V2>(sim2$V1+q2-q1)),]
     jline<-rbind(j1o[which(j1o[,2]<j1o[,1]+q2-q1),],j2o[which(j2o[,2]>j2o[,1]+q2-q1),])
     jline<-jline[order(jline$j2..1..),]
     jj1<-as.matrix(j1o[which(j1o[,2]<j1o[,1]+q2-q1),])

@@ -1,5 +1,7 @@
+#' Creates homogeneous level curve for every model
+#'
 #' Creates homogeneous level curve for every model (adapted from the function digit.curves
-#' of the geomorph package)
+#' of the geomorph R package)
 #'
 #' @param start A numeric vector of x,y, coordinates for the landmark defining the start of the curve
 #' @param curve A matrix (p x k) of 2D coordinates for a set of ordered points defining a curve
@@ -12,9 +14,12 @@
 #' Group Differences in Outline Shape. Medical Image Analysis 1(3):225-243.
 #' @references Rohlf, F.J., 2015. The tps series of software. Hystrix 26(1):9-12.
 #' @examples
+#' # Curve  creation
 #' x<-seq(0,30, length=200)
 #' y=90-x^2
 #' curve=data.frame(x,y)
+#'
+#' # Homogenization of the number of points
 #' ltl<-digit.curves.p(start=curve[1,], curve=as.matrix(curve), nPoints=98, closed = FALSE)
 #' plot(ltl)
 
@@ -38,7 +43,9 @@ digit.curves.p <- function(start, curve, nPoints, closed=TRUE){
 }
 
 
-#' basic function for spacing out curve points via linear interpolation (adapted from the function digit.curves
+#' Spaces out curve points via linear interpolation
+#'
+#' Basic function for spacing out curve points via linear interpolation (adapted from the function digit.curves
 #' of the geomorph package). The main different is that curves are normalized to allow an intercomaprison of confidence scores
 #' regardless of the input data.
 #' used in digit.curves.p

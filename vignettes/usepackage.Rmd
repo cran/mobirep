@@ -53,7 +53,9 @@ margins=Margins.mod(tr1,tr2,u=fire01meantemp)
 ```
 ## Fit bivariate models to the data
 ```
-jtres<-JT.KDE.ap(u2=u,pb=0.01,pobj=upobj,beta=100,vtau=vtau,kk=kk,devplot=F,mar1=uu[,1],mar2=uu[,2],px=pp[,1],py=pp[,2],interh=interh)
+jtres<-JT.KDE.ap(u2=u,pb=0.01,pobj=upobj,beta=100,
+vtau=vtau,kk=kk,devplot=F,mar1=uu[,1],mar2=uu[,2],
+px=pp[,1],py=pp[,2],interh=interh)
 ```
 
 

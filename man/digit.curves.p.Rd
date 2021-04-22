@@ -2,8 +2,7 @@
 % Please edit documentation in R/digit.curves.R
 \name{digit.curves.p}
 \alias{digit.curves.p}
-\title{Creates homogeneous level curve for every model (adapted from the function digit.curves
-of the geomorph package)}
+\title{Creates homogeneous level curve for every model}
 \usage{
 digit.curves.p(start, curve, nPoints, closed = TRUE)
 }
@@ -21,12 +20,15 @@ A matrix of coordinates for nPoints equally spaced semilandmarks sampled along t
 }
 \description{
 Creates homogeneous level curve for every model (adapted from the function digit.curves
-of the geomorph package)
+of the geomorph R package)
 }
 \examples{
+# Curve  creation
 x<-seq(0,30, length=200)
 y=90-x^2
 curve=data.frame(x,y)
+
+# Homogenization of the number of points
 ltl<-digit.curves.p(start=curve[1,], curve=as.matrix(curve), nPoints=98, closed = FALSE)
 plot(ltl)
 }

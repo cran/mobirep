@@ -2,7 +2,7 @@
 % Please edit documentation in R/level_curves.R
 \name{curve.funct}
 \alias{curve.funct}
-\title{Create level curves for copulae and other models}
+\title{Creates extreme level curves for copulae}
 \usage{
 curve.funct(
   pxf,
@@ -14,7 +14,8 @@ curve.funct(
   ng = 100,
   inter = "comb",
   coco,
-  c1
+  c1,
+  logm = FALSE
 )
 }
 \arguments{
@@ -26,21 +27,55 @@ curve.funct(
 
 \item{mar2}{Values of the second margin}
 
-\item{pos}{part of the curve to be modelled '\code{l}' for the left part, '\code{m}' for the moddle part and '\code{r}' for the right part}
+\item{pos}{part of the curve to be modelled '\code{l}' for the left part, '\code{m}' for the middle part and '\code{r}' for the right part}
 
-\item{pobje}{probability of the level curve to be modeled}
+\item{pobje}{probability of the level curve to be modelled}
 
 \item{ng}{number of points to be interpolated}
 
-\item{inter}{type of hazard interrelation '\code{comb}' for compound and '\code{casc}' for cascade,}
+\item{inter}{type of hazard interrelation '\code{comb}' for compound (joint exceedance probability) and '\code{casc}' for cascade (conditional porbability)}
 
 \item{coco}{a copula function from the following: GHcop,NORMcop,FGMcop,GLcop}
 
 \item{c1}{the parameter of the copula}
+
+\item{logm}{log tranformation of the margins '\code{TRUE}'or '\code{FALSE}'}
 }
 \value{
-Level curves for a given joint probability
+two column matrix representing the level curve for a given probability
 }
 \description{
-Take data on uniform margins and fit the Ledford and Tawn (1997) joint tail model. Also contains the method where additional information from values that are extreme in at most one variable is used.
+The function creates extreme level curves for copulae. The function divides the 2D space
+into 3 subspaces to model level curves with extreme low probability '\code{pobj}' (<0.001). Two types of level
+curves can be modeled: conditional or joint exceedance.
+}
+\examples{
+data(porto)
+tr1=0.9
+tr2=0.9
+fire01meantemp=na.omit(fire01meantemp)
+u=fire01meantemp
+
+#Compute uniform margins
+marg=Margins.mod(tr1,tr2,u=fire01meantemp)
+pp=marg$uvar_ext
+uu=marg$val_ext
+
+#Copula parameters
+c1=1.5
+copu<-copBasic::GHcop
+
+upobj=0.001
+interh="comb"
+
+#compute the curve on 3 subdomains
+cl1<-curve.funct(pxf=pp[,1],pyf=pp[,2],mar1=uu[,1],mar2=uu[,2],pos="l",
+pobje=upobj,ng=100,inter=interh,coco=copu,c1=c1)
+cl2<-curve.funct(pxf=pp[,1],pyf=pp[,2],mar1=uu[,1],mar2=uu[,2],pos="m",
+pobje=upobj,ng=100,inter=interh,coco=copu,c1=c1)
+cl3<-curve.funct(pxf=pp[,1],pyf=pp[,2],mar1=uu[,1],mar2=uu[,2],pos="r",
+pobje=upobj,ng=100,inter=interh,coco=copu,c1=c1)
+
+cl<-rbind(cl1,cl2,cl3)
+
 }

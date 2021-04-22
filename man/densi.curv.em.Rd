@@ -2,13 +2,13 @@
 % Please edit documentation in R/supplement.funct.R
 \name{densi.curv.em}
 \alias{densi.curv.em}
-\title{Compute the density of level curves for non-parametric models}
+\title{Computes the density of level curves for non-parametric models}
 \usage{
 densi.curv.em(kdetab, lines, tl, lines2)
 }
 \arguments{
 \item{kdetab}{a table of dimentsion k*k representing the bivariate density of
-the dataset estimated with a kernel density estimator}
+the data estimated with a kernel density estimator}
 
 \item{lines}{location of the objective level curve for which the deesnity needs to be estimated in the 2D space}
 
@@ -20,11 +20,16 @@ the dataset estimated with a kernel density estimator}
 density for each points (couple x,y) along the level curves
 }
 \description{
-Based on a kernel density estimation of simulated points for conditional extremes and extrapolation of kde
+Computes the density along the level curve estimated by JT-KDE or Cond-Ex models.
+It is based on a kernel density estimation of simulated points for Cond-Ex and extrapolation of the kernel density estimation
 of the base curve for the joint tail model
 }
 \examples{
   \dontrun{
-ltl<-densi.curv.em(jt.dens,ltlo, tl="l", ltl)
+ data(porto)
+ fire01meantemp=na.omit(fire01meantemp)
+ u=fire01meantemp
+ jt.dens<-kde(u,gridsize = 200)
+ltl<-densi.curv.em(kdetab=jt.dens,lines2=ltlo, tl="l", lines=ltl)
 }
 }

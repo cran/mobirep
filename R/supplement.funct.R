@@ -1,6 +1,10 @@
 
-#' Automatically select analaugous datasets from the 60 datasets created in Tilloy et al.(2020)
-#' see: https://nhess.copernicus.org/articles/20/2091/2020/nhess-20-2091-2020.html for more detaila
+#' Identifies synthetic datasets analig to input data
+#'
+#' Automatically identifies analog datasets from the 60 datasets created
+#' in Tilloy et al.(2020). The function helps the user to select relevant
+#' bivariate model among the six models discussed in Tilloy et al. (2020)
+#' See https://nhess.copernicus.org/articles/20/2091/2020/nhess-20-2091-2020.html for more detail.
 #'
 #' @param u2 Two column data frame
 #' @export
@@ -49,6 +53,7 @@ AnalogSel<-function(u2){
 #' }
 #' @examples
 #' data(porto)
+#' #set extreme threshold for both variable
 #' tr1=0.9
 #' tr2=0.9
 #' fire01meantemp=na.omit(fire01meantemp)
@@ -159,20 +164,25 @@ Margins.mod<-function(tr1,tr2,u)
 
 
 
-#' Compute the density of level curves for non-parametric models
+#' Computes the density of level curves for non-parametric models
 #'
-#' Based on a kernel density estimation of simulated points for conditional extremes and extrapolation of kde
+#' Computes the density along the level curve estimated by JT-KDE or Cond-Ex models.
+#' It is based on a kernel density estimation of simulated points for Cond-Ex and extrapolation of the kernel density estimation
 #' of the base curve for the joint tail model
 #'
 #' @param kdetab a table of dimentsion k*k representing the bivariate density of
-#' the dataset estimated with a kernel density estimator
+#' the data estimated with a kernel density estimator
 #' @param lines location of the objective level curve for which the deesnity needs to be estimated in the 2D space
 #' @param tl indicator which model's density have been estimated in the kdetab, '\code{l}' the joint tail model, '\code{h}' for the conditional extremes model
 #' @param lines2 location of the base level curve (only used when tl=l)
 #' @export
 #' @examples
 #'   \dontrun{
-#' ltl<-densi.curv.em(jt.dens,ltlo, tl="l", ltl)
+#'  data(porto)
+#'  fire01meantemp=na.omit(fire01meantemp)
+#'  u=fire01meantemp
+#'  jt.dens<-kde(u,gridsize = 200)
+#' ltl<-densi.curv.em(kdetab=jt.dens,lines2=ltlo, tl="l", lines=ltl)
 #' }
 #' @return density for each points (couple x,y) along the level curves
 densi.curv.em<-function(kdetab,lines,tl,lines2){
@@ -200,9 +210,10 @@ densi.curv.em<-function(kdetab,lines,tl,lines2){
 
 
 
-#' Compute the density of level curves for copulae models
+#' Computes the density of level curves for copulae models
 #'
-#' Based on the density function of selected copula
+#' Computes the density along the level curve estimate with a copula.
+#' Based on the density function of the selected copula.
 #'
 #' @param lines location of the objective level curve for which the density needs to be estimated in the 2D space
 #' @param copi a copula function with the parameters fitted to the bivariate dataset
@@ -212,11 +223,43 @@ densi.curv.em<-function(kdetab,lines,tl,lines2){
 #' @export
 #' @return density for each points (couple x,y) along the level curves for copulae
 #' @examples
-#'   \dontrun{
-#' cli<-densi.curv.cop(cli,o,kk[,1],kk[,2],u=u2)
-#' }
+#' data(porto)
+#'
+#' tr1=0.9
+#' tr2=0.9
+#' fire01meantemp=na.omit(fire01meantemp)
+#' u=fire01meantemp
+#'
+#' #Compute uniform margins
+#' marg=Margins.mod(tr1,tr2,u=fire01meantemp)
+#' kk=marg$uvar
+#' pp=marg$uvar_ext
+#' uu=marg$val_ext
+#'
+#' #Copula parameters
+#' c1=1.5
+#' copu<-copBasic::GHcop
+#' upobj=0.001
+#' interh="comb"
+#'
+#' #compute the curve on 3 subdomains
+#' cl1<-curve.funct(pxf=pp[,1],pyf=pp[,2],mar1=uu[,1],mar2=uu[,2],pos="l",
+#' pobje=upobj,ng=100,inter=interh,coco=copu,c1=c1)
+#' cl2<-curve.funct(pxf=pp[,1],pyf=pp[,2],mar1=uu[,1],mar2=uu[,2],pos="m",
+#' pobje=upobj,ng=100,inter=interh,coco=copu,c1=c1)
+#' cl3<-curve.funct(pxf=pp[,1],pyf=pp[,2],mar1=uu[,1],mar2=uu[,2],pos="r",
+#' pobje=upobj,ng=100,inter=interh,coco=copu,c1=c1)
+#'
+#' cl<-rbind(cl1,cl2,cl3)
+#'
+#' # Homogenization of the number of points
+#' cli<-digit.curves.p(start=c(cl[1,1],cl[1,2]), as.matrix(cl), nPoints=98, closed = FALSE)
+#'
+#' # Computes the density along the curve
+#' co=copula::gumbelCopula(c1,dim=2)
+#' cli<-densi.curv.cop(lines=cli,copi=co,pxf=kk[,1],pyf=kk[,2],u=u)
 #' @seealso \code{\link[copula]{dcopula}}
-
+#' @importFrom copBasic GHcop
 densi.curv.cop<-function(lines, copi,pxf,pyf,u){
   linep<-lines
   linep[,1]<-spline(u[,1],pxf, n = 300, method = "fmm",
